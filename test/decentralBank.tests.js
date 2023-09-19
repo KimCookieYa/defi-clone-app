@@ -92,6 +92,23 @@ contract("DecentralBank", ([owner, customer]) => {
 
       // Ensure Only The Owner Can Issue Tokens
       await decentralBank.issueTokens({ from: customer }).should.be.rejected;
+
+      // Unstake Tokens
+      await decentralBank.unstakeTokens({ from: customer });
+
+      // Check unstaking balances
+      result = await tether.balanceOf(customer);
+      assert.equal(result.toString(), tokens('100'), 'Customer should have 100 tokens');
+
+      // Check updated balance of decentralBank
+      result = await tether.balanceOf(decentralBank.address);
+      assert.equal(result.toString(), tokens('0'), 'decentralBank should have 0 tokens');
+
+      // isStaking update
+      result = await decentralBank.isStaking(customer);
+      assert.equal(
+        result.toString(),'false', 'Customer is no longer staking status after unstaking'
+      )
     });
   });
 });
