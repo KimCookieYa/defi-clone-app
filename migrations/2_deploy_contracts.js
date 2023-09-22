@@ -2,7 +2,7 @@ const RWD = artifacts.require("RWD");
 const Tether = artifacts.require("Tether");
 const DecentralBank = artifacts.require("DecentralBank");
 
-module.exports = async function(deployer, network, accounts) {
+module.exports = async function (deployer, network, accounts) {
   // Deploy Mock Tether Token
   await deployer.deploy(Tether);
   const tether = await Tether.deployed();

@@ -2,9 +2,7 @@ const RWD = artifacts.require("RWD");
 const Tether = artifacts.require("Tether");
 const DecentralBank = artifacts.require("DecentralBank");
 
-require("chai")
-  .use(require("chai-as-promised"))
-  .should();
+require("chai").use(require("chai-as-promised")).should();
 
 contract("DecentralBank", ([owner, customer]) => {
   let tether, rwd, decentralBank;
@@ -98,17 +96,27 @@ contract("DecentralBank", ([owner, customer]) => {
 
       // Check unstaking balances
       result = await tether.balanceOf(customer);
-      assert.equal(result.toString(), tokens('100'), 'Customer should have 100 tokens');
+      assert.equal(
+        result.toString(),
+        tokens("100"),
+        "Customer should have 100 tokens"
+      );
 
       // Check updated balance of decentralBank
       result = await tether.balanceOf(decentralBank.address);
-      assert.equal(result.toString(), tokens('0'), 'decentralBank should have 0 tokens');
+      assert.equal(
+        result.toString(),
+        tokens("0"),
+        "decentralBank should have 0 tokens"
+      );
 
       // isStaking update
       result = await decentralBank.isStaking(customer);
       assert.equal(
-        result.toString(),'false', 'Customer is no longer staking status after unstaking'
-      )
+        result.toString(),
+        "false",
+        "Customer is no longer staking status after unstaking"
+      );
     });
   });
 });
