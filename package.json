@@ -16,13 +16,13 @@
     "ethers": "^6.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "styled-components": "^6.0.8",
     "web3": "^4.1.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react-swc": "^3.3.2",
+    "autoprefixer": "^10.4.16",
     "chai": "^4.3.8",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^3.1.0",
@@ -31,6 +31,8 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "mocha": "^10.2.0",
+    "postcss": "^8.4.30",
+    "tailwindcss": "^3.3.3",
     "vite": "^4.4.5"
   },
   "eslintConfig": {
