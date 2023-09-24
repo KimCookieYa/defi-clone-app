@@ -5819,12 +5819,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x48F9fA1753C0AD898Ce5e499E9fe9226f92840a7",
-      "transactionHash": "0x935c8a28b2570a4e8b89fd395e2f9cf7d182046cd4164af7bb4c110ffc2e50b9"
+      "address": "0xb2F8F8530374F195D90e1DdA7170D6187EAB8400",
+      "transactionHash": "0x8905e31eee5f56bb83a567261bcb646e475a44dc485cbb4f385b20b3119d9ec4"
     }
   },
   "schemaVersion": "3.4.15",
-  "updatedAt": "2023-09-22T19:05:16.395Z",
+  "updatedAt": "2023-09-23T17:07:11.096Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}
