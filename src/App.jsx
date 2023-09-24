@@ -5,9 +5,10 @@ import Web3 from "web3";
 import Tether from "../truffle_abis/Tether.json";
 import RWD from "../truffle_abis/RWD.json";
 import DecentralBank from "../truffle_abis/DecentralBank.json";
+import ParticleSettings from "./components/ParticleSettings";
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [account, setAccount] = useState("0x0");
   const [tether, setTether] = useState({});
   const [tetherBalance, setTetherBalance] = useState(0);
@@ -19,15 +20,23 @@ function App() {
   const loadBlockchainData = async () => {
     const web3 = window.web3;
     const accounts = await web3.eth.getAccounts();
-    setAccount(accounts[0]);
+    setAccount(() => accounts[1]);
+    console.log(account);
+    const accountTemp = accounts[1];
     const networkId = await web3.eth.net.getId();
 
     // Load Tether Contract
     const tetherData = Tether.networks[networkId];
     if (tetherData) {
-      setTether(() => new web3.eth.Contract(Tether.abi, tetherData.address));
-      let tetherBalance = await tether.methods.balanceOf(account).call();
+      const tetherContract = new web3.eth.Contract(
+        Tether.abi,
+        tetherData.address
+      );
+      let tetherBalance = await tetherContract.methods
+        .balanceOf(accountTemp)
+        .call();
       setTetherBalance(() => tetherBalance.toString());
+      setTether(() => tetherContract);
     } else {
       window.alert("Tether contract not deployed to detected network");
     }
@@ -35,9 +44,10 @@ function App() {
     // Load RWD Contract
     const rwdData = RWD.networks[networkId];
     if (rwdData) {
-      setRWD(() => new web3.eth.Contract(RWD.abi, rwdData.address));
-      let rwdBalance = await rwd.methods.balanceOf(account).call();
+      const rwdContract = new web3.eth.Contract(RWD.abi, rwdData.address);
+      let rwdBalance = await rwdContract.methods.balanceOf(accountTemp).call();
       setRWDBalance(() => rwdBalance.toString());
+      setRWD(() => rwdContract);
     } else {
       window.alert("Tether contract not deployed to detected network");
     }
@@ -45,14 +55,15 @@ function App() {
     // Load DecentralBank Contract
     const decentralBankData = DecentralBank.networks[networkId];
     if (decentralBankData) {
-      setDecentralBank(
-        () =>
-          new web3.eth.Contract(DecentralBank.abi, decentralBankData.address)
+      const decentralBankContract = new web3.eth.Contract(
+        DecentralBank.abi,
+        decentralBankData.address
       );
-      let stakingBalance = await decentralBank.methods
-        .stakingBalance(account)
+      let stakingBalance = await decentralBankContract.methods
+        .stakingBalance(accountTemp)
         .call();
       setstakingBalance(() => stakingBalance.toString());
+      setDecentralBank(() => decentralBankContract);
     } else {
       window.alert("Tether contract not deployed to detected network");
     }
@@ -63,10 +74,8 @@ function App() {
 
   useEffect(() => {
     const fetch = async () => {
+      setLoading(true);
       await loadWeb3();
-      const accounts = await window.web3.eth.getAccounts();
-      console.log(accounts);
-      setAccount(accounts[1]);
       await loadBlockchainData();
     };
     fetch();
@@ -86,11 +95,14 @@ function App() {
   };
 
   return (
-    <>
+    <div className="App" style={{ position: "relative" }}>
+      <div style={{ position: "absolute", zIndex: "-1" }}>
+        <ParticleSettings />
+      </div>
       <NavBar account={account} />
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
       {loading ? <h1>Loading...</h1> : <div>End Loading!</div>}
-    </>
+    </div>
   );
 }
 
