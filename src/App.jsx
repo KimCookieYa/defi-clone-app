@@ -6,6 +6,9 @@ import Tether from "../truffle_abis/Tether.json";
 import RWD from "../truffle_abis/RWD.json";
 import DecentralBank from "../truffle_abis/DecentralBank.json";
 import ParticleSettings from "./components/ParticleSettings";
+import Main from "./components/Main";
+
+export const web3 = new Web3(Web3.givenProvider || "http://localhost:7545");
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -18,7 +21,6 @@ function App() {
   const [stakingBalance, setstakingBalance] = useState(0);
 
   const loadBlockchainData = async () => {
-    const web3 = window.web3;
     const accounts = await web3.eth.getAccounts();
     setAccount(() => accounts[1]);
     console.log(account);
@@ -38,7 +40,7 @@ function App() {
       setTetherBalance(() => tetherBalance.toString());
       setTether(() => tetherContract);
     } else {
-      window.alert("Tether contract not deployed to detected network");
+      alert("Tether contract not deployed to detected network");
     }
 
     // Load RWD Contract
@@ -82,16 +84,36 @@ function App() {
   }, []);
 
   const loadWeb3 = async () => {
-    if (window.ethereum) {
-      window.web3 = new Web3(window.ethereum);
-      await window.ethereum.enable();
-    } else if (window.web3) {
-      window.web3 = new Web3(window.web3.currentProvider);
-    } else {
-      window.alert(
+    if (!web3) {
+      alert(
         "Non-Ethereum browser detected. You should consider trying MetaMask!"
       );
     }
+  };
+
+  const stakeTokens = (amount) => {
+    setLoading(true);
+    tether.methods
+      .approve(decentralBank._address, amount)
+      .send({ from: account, gas: 1000000 })
+      .on("transactionHash", () => {
+        decentralBank.methods
+          .depositTokens(amount)
+          .send({ from: account, gas: 1000000 })
+          .on("transactionHash", () => {
+            setLoading(false);
+          });
+      });
+  };
+
+  const unstakeTokens = () => {
+    setLoading(true);
+    decentralBank.methods
+      .unstakeTokens()
+      .send({ from: account, gas: 1000000 })
+      .on("transactionHash", () => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -100,8 +122,19 @@ function App() {
         <ParticleSettings />
       </div>
       <NavBar account={account} />
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      {loading ? <h1>Loading...</h1> : <div>End Loading!</div>}
+
+      {loading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <Main
+          tetherBalance={tetherBalance}
+          rwdBalance={rwdBalance}
+          stakingBalance={stakingBalance}
+          stakeTokens={stakeTokens}
+          unstakeTokens={unstakeTokens}
+          decentralBankContract={decentralBank}
+        />
+      )}
     </div>
   );
 }
